@@ -27,14 +27,17 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	DBname := "auth"
 	//defer client.Disconnect(context.Background())
 
-	userCollection = client.Database(DBname).Collection("users")
+	userCollection = client.Database("admin").Collection("users")
 	if userCollection == nil {
 		log.Fatal("Failed to initialize user collections")
 	}
+
+	// if err := client.Database("admin").RunCommand(context.TODO(), bson.D{{Key: "ping", Value: 1}}).Err(); err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -82,11 +85,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	//result, err := .DB.Insert(, u)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	result, err := userCollection.InsertOne(ctx, user)
-	if err != nil {
-		http.Error(w, "ERROR while inserting : "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	result, _ := userCollection.InsertOne(ctx, user)
+	// if err != nil {
+	// 	http.Error(w, "ERROR while inserting : "+err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(result)
