@@ -28,7 +28,7 @@ func main() {
 	http.HandleFunc("/register", authenticate.Register)
 	http.HandleFunc("/login", authenticate.Login)
 
-	port := 3000
+	port := 65005
 	fmt.Printf("Server is running on port %d\n", port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 
